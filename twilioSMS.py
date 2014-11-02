@@ -19,11 +19,11 @@ def processBody(body):
 			sendStr = "Attention: Ebola a ete confirmer en " + location
 		else:
 			sendStr = "Ebola n'a pas ete confirmer en " + location
-	elif unidecode(usage) == 'pres de':
-		coords, distance = checkLongitudeLatitude(location)
-		threshold = 100.0
-		if distance < threshold:
-			sendStr = "Attention: Ebola a ete confirmer vers %.3f km" % distance
+	elif unidecode(usage) == 'pres':
+		distance = checkLongitudeLatitude(location)
+		threshold = 1000.0
+		if float(distance) < threshold:
+			sendStr = "Attention: Ebola a ete confirmer vers " + distance + " km"
 		else:
 			sendStr = "Ebola n'a pas ete confirmer vers " + str(threshold) + " km"
 	else:
