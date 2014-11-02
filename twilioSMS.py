@@ -2,6 +2,7 @@ from flask import Flask, request, redirect
 import twilio.twiml
 from twilio.rest import TwilioRestClient
 from Geocoding import checkLocation, checkLongitudeLatitude
+from unidecode import unidecode
 
 #ACCOUNT_SID = "ACf10261d794fdaf920c6e1b08908cf198"
 #AUTH_TOKEN = "935387730b05191917e9773e8b03d0dd"
@@ -12,22 +13,21 @@ from Geocoding import checkLocation, checkLongitudeLatitude
 def processBody(body):
 	usage = ' '.join(body.split()).split()[0].lower()
 	location = ' '.join(body.split()).split()[1]
-	if usage == 'check':
+	if unidecode(usage) == 'verifier':
 		coords, warn = checkLocation(location)
-		dataList = [location] + coords
 		if warn:
-			sendStr = "Warning: Ebola has been confirmed at " + location
+			sendStr = "Attention: Ebola a ete confirmer en " + location
 		else:
-			sendStr = "No Ebola cases have been found at " + location
-	elif usage == 'near':
+			sendStr = "Ebola n'a pas ete confirmer en " + location
+	elif unidecode(usage) == 'pres de':
 		coords, distance = checkLongitudeLatitude(location)
 		threshold = 100.0
 		if distance < threshold:
-			sendStr = "Warning: Ebola has been confirmed %.3f miles away" % distance
+			sendStr = "Attention: Ebola a ete confirmer vers %.3f km" % distance
 		else:
-			sendStr = "No Ebola cases have been confirmed within " + str(threshold) + "miles"
+			sendStr = "Ebola n'a pas ete confirmer vers " + str(threshold) + " km"
 	else:
-		sendStr = "Please forgive our error. The input is invalid."
+		sendStr = "S'il vous plait excuser notre erreur. Votre entree est invalide."
 	return sendStr 
 
 app = Flask(__name__)
