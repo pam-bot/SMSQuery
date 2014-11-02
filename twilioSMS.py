@@ -4,11 +4,6 @@ from twilio.rest import TwilioRestClient
 from Geocoding import checkLocation, checkLongitudeLatitude
 from unidecode import unidecode
 
-#ACCOUNT_SID = "ACf10261d794fdaf920c6e1b08908cf198"
-#AUTH_TOKEN = "935387730b05191917e9773e8b03d0dd"
-#client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
-#for message in client.messages.list():
-	#print message.body
 
 def processBody(body):
 	usage = ' '.join(body.split()).split()[0].lower()
