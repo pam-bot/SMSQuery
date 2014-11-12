@@ -1,0 +1,72 @@
+CREATE DATABASE smsante;
+USE smsante;
+
+CREATE TABLE outbreaks (
+location VARCHAR(100) NOT NULL PRIMARY KEY,
+country VARCHAR(100),
+longitude DECIMAL(8,6),
+latitude DECIMAL(8,6),
+presence CHAR(1)
+);
+
+CREATE USER 'ping'@'%' IDENTIFIED BY 'temp';
+GRANT SELECT ON smsante.outbreaks TO 'ping'@'%';
+FLUSH PRIVILEGES;
+
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Bamako','Mali',12.65,-8,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Beyla','Guinea',8.683333,-8.633333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Bo','Sierra Leone',7.9551791,11.7409946,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Boende','Democratic Republic of the Congo',-0.733333,19.2,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Boende Moke','Democratic Republic of the Congo',-0.381414,20.750031,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Boffa','Guinea',10.180825,-14.039162,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Bombali','Sierra Leone',9.247584,-12.163272,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Bomi','Liberia',6.756293,-10.845147,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Bonthe','Sierra Leone',7.526389,-12.505,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Conakry','Guinea',9.509167,-13.712222,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Coyah','Guinea',9.7,-13.383333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Dabola','Guinea',10.75,-11.116667,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Dalaba','Guinea',10.166667,-9.383333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Dinguiraye','Guinea',11.3,-10.716667,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Dubreka','Guinea',9.783333,-13.516667,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Forecariah','Guinea',9.433333,-13.083333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Gbarpolu','Liberia',7.495264,-10.08073,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Grand Bassa','Liberia',6.230845,-9.812494,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Grand Cape Mount','Liberia',7.046776,-11.071176,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Grand Gedeh','Liberia',5.922208,-8.221298,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Grand Kru','Liberia',4.761386,-8.221298,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Gueckedou','Guinea',8.566667,-10.133333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kailahun','Sierra Leone',8.277222,-10.573889,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kambia','Sierra Leone',9.126166,-12.917652,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kayes','Mali',14.4367876,-11.4452717,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kenema','Sierra Leone',7.863215,-11.195717,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kerouane','Guinea',9.266667,-9.016667,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kindia','Guinea',10.066667,-12.85,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kissidougou','Guinea',9.183333,-10.1,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Koinadugu','Sierra Leone',9.516877,-11.36363,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kono','Sierra Leone',8.7663285,-10.8903099,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Kouroussa','Guinea',10.65,-9.883333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Lofa','Liberia',8.191118,-9.723267,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Lokolia','Democratic Republic of the Congo',-0.631684,20.562519,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Lokula','Democratic Republic of the Congo',-0.420979,20.653891,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Lola','Guinea',37.318664,-88.307812,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Macenta','Guinea',8.55,-9.466667,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Margibi','Liberia',6.515187,-10.30489,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Maryland','Liberia',4.725888,-7.74167,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Mondombe','Democratic Republic of the Congo',-0.77584,22.753945,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Montserrado','Liberia',6.552581,-10.529611,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Moyamba','Sierra Leone',8.160556,-12.433333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Nimba','Liberia',6.842761,-8.660059,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Nzerekore','Guinea',7.75,-8.816667,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Pita','Guinea',11.059568,-12.395582,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Port Loko','Sierra Leone',8.766667,-12.7875,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Pujehun','Sierra Leone',7.350556,-11.718056,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('River Cess','Liberia',5.902533,-9.456155,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('River Gee','Liberia',5.260489,-7.87216,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Siguiri','Guinea',11.416667,-9.166667,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Sikasso','Mali',11.316667,-5.666667,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Sinoe','Liberia',5.49871,-8.660059,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Telimele','Guinea',10.9,-13.033333,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Tonkolili','Sierra Leone',8.980427,-11.794756,'Y');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Watsikengo','Democratic Republic of the Congo',-0.8435,20.563259,'N');
+INSERT INTO outbreaks(location,country,latitude,longitude,presence) VALUES ('Yomou','Guinea',7.566,-9.2533,'Y');
+
