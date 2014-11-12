@@ -11,3 +11,9 @@ Things left to do:
 - Change output to actual French with accents
 - Put onto Google Developer server
 - Implementing Region Filtering of Twilio Requests
+
+Optional Goodies:
+- Security better than pingtemp
+- Adding Functionality:
+	- Positive data like Hospital Beds, etc.
+	- Health Workers Update
