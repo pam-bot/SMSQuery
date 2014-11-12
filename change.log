@@ -10,4 +10,4 @@ Things left to do:
 - Google Maps API fetching coordinates
 - Change output to actual French with accents
 - Put onto Google Developer server
-
+- Implementing Region Filtering of Twilio Requests
