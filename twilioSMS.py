@@ -3,7 +3,7 @@ import twilio.twiml
 from twilio.rest import TwilioRestClient
 from Geocoding import checkLocation, checkLongitudeLatitude
 from unidecode import unidecode
-
+ # -*- coding: iso-8859-1 -*-
 
 def processBody(body):
 	usage = ' '.join(body.split()).split()[0].lower()
@@ -18,11 +18,11 @@ def processBody(body):
 		distance = checkLongitudeLatitude(location)
 		threshold = 1000.0
 		if float(distance) < threshold:
-			sendStr = "Attention: Ebola a ete confirmer vers " + distance + " km"
+			sendStr = u"Attention: Ebola a été confirmer vers " + distance + " km"
 		else:
-			sendStr = "Ebola n'a pas ete confirmer vers " + str(threshold) + " km"
+			sendStr = u"Ebola n'a pas été confirmer vers " + str(threshold) + " km"
 	else:
-		sendStr = "S'il vous plait excuser notre erreur. Votre entree est invalide."
+		sendStr = u"S'il vous plaît excuser notre erreur. Votre entrée est invalide."
 	return sendStr 
 
 app = Flask(__name__)
