@@ -11,9 +11,9 @@ def processBody(body):
 	if unidecode(usage) == 'verifier':
 		coords, warn = checkLocation(location)
 		if warn:
-			sendStr = "Attention: Ebola a ete confirmer en " + location
+			sendStr = u"Attention: Ebola a été confirmer en " + location
 		else:
-			sendStr = "Ebola n'a pas ete confirmer en " + location
+			sendStr = u"Ebola n'a pas été confirmer en " + location
 	elif unidecode(usage) == 'pres':
 		distance = checkLongitudeLatitude(location)
 		threshold = 1000.0
