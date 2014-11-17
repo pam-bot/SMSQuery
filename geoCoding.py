@@ -1,107 +1,105 @@
-import sys
-import json
-import urllib2
-import math
-from decimal import *
-
-"""
-def loadData(location):
-	location, latitude, longitude = getCoords(location)
-	# Open outbreak data
-	with open('locations.geojson') as json_file:
-		outbreak_data = json.load(json_file)
-	return location, latitude, longitude, outbreak_data
-
-   
-# Pre-check for town's presence in outbreak
-def checkLocation(location):
-	location, latitude, longitude, outbreak_data = loadData(location)
-	for i in range(2,len(outbreak_data['features'])):
-		if 'address' in outbreak_data['features'][i]['properties']:
-			if location == outbreak_data['features'][i]['properties']['address']:
-				coords = outbreak_data['features'][i]['geometry']['coordinates']
-				return coords, 'warn'
-	else:
-		return [], ''
-
-
-# Scan Latitudes and Longitudes for outbreaks within a mile, using the Haversine Function. 
-def checkLongitudeLatitude(location):
-	location, latitude, longitude, outbreak_data = loadData(location)
-	towns = [outbreak_data['features'][k]['properties']['address'] for k in range(2, len(outbreak_data['features'])) if 'address' in outbreak_data['features'][k]['properties']]
-	alldist = []
-	for name in towns:
-		if ' ' in name:
-			continue 
-		elif 'York' in name:
-			continue
-		url = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='+location+'+Africa&destinations='+name+'+Africa'
-		response = urllib2.urlopen(url)
-		rjson = response.read()
-		fjson = json.loads(rjson)
-		try:
-			dist = float(fjson['rows'][0]['elements'][0]['distance']['value'])
-		except KeyError:
-			continue
-		alldist.append(dist)
-	udist = min(alldist)
-	return str(udist/1000.0)
-
-
-def runGeocoding(location):
-	location, latitude, longitude, outbreak_data = loadData(location)
-	coords1, result = checkLocation(location)
-	distance = checkLongitudeLatitude(location)
-	print coords1, result, distance
-"""
-
+import math as m
 import urllib2
 import json
 import MySQLdb
 
-"""
-Ideas:
-- user inputs text, goes through Google check
-- corrected input is checked with DB for presence of outbreak
-	- also see if within subregion of DB entry
-- if not,
-- each DB location scanned for haversine with input
-- output smallest distance 
-"""
 
-
-def dbSelect(search):
+def dbLocs():
+	# cols is comma-deliminated string of columns
+	# search is the name of the affected region
 	db = MySQLdb.connect(host='localhost', user='ping', passwd='temp', db='smsante')
-	cur = db.cursor() 
-	cur.execute("SELECT * FROM outbreaks WHERE location='" + search + 
-		"' AND presence='Y';")
-	results = []
-	for row in cur.fetchall():
-		results.append(row)
-	return results
+	cur = db.cursor()
+	cur.execute("SELECT location, latitude, longitude, type FROM outbreaks WHERE presence='Y';")
+	outbreaks = {}
+	for loc in cur.fetchall():
+		outbreaks[loc[0]] = {'coords': (loc[1], loc[2]), 'type': loc[3]}
+	obKeys = outbreaks.keys()
+	return obKeys, outbreaks
 
 
-def getCoords(location):
-	loc = '+'.join(location.split(' '))
-	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + loc
+def getCoords(locInput):
+	loc = '+'.join(locInput.split(' '))
+	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + loc + '+Africa'
 	response = urllib2.urlopen(url)
 	geocode = response.read()
 	jsonres = json.loads(geocode)
 	if jsonres['status'] == 'OK':
 		pass
-	else: # add elifs
-		print 'Error. Status not okay'
-	coords = jsonres['results'][0]['geometry']['location']
-	# just to make sure match is correct, delete later
-	locmatch = jsonres['results'][0]['address_components'][0]['long_name']
-	# later: accomodate levels of geography (is something within something)
-	# ['locality', 'administrative_area_level_2',
-	# 'administrative_area_level_1', 'country']
-	return locmatch, coords['lat'], coords['lng']
+	else:
+		return {}, '', (0, 0) #empty result
+	try:
+		coords = jsonres['results'][0]['geometry']['location']
+		addrcomp = jsonres['results'][0]['address_components']
+		levels = [addrcomp[n]['types'][0] for n in range(len(addrcomp))]
+		locs = [addrcomp[n]['long_name'] for n in range(len(addrcomp))]
+		locDict = dict(zip(locs, levels))
+	except KeyError:
+		return {}, '', (0, 0) #empty result
+	return locDict, levels[0], (coords['lat'], coords['lng'])
+
+
+def haversine((lat1, lng1), (lat2, lng2)):
+	lng1, lat1, lng2, lat2 = map(m.radians, [lng1, lat1, lng2, lat2])
+	dlng = lng2 - lng1 
+	dlat = lat2 - lat1 
+	a = m.sin(dlat/2)**2+m.cos(lat1)*m.cos(lat2)*m.sin(dlng/2)**2
+	distance = 6367*2*m.asin(m.sqrt(a)) #Radius=6367km
+	b = m.atan2(
+		m.sin(dlng)*m.cos(lat2), 
+		m.cos(lat1)*m.sin(lat2)-m.sin(lat1)*m.cos(lat2)*m.cos(dlng)
+		)
+	bd = m.degrees(b)
+	turns, bearing = divmod(bd + 360, 360)
+	return distance, bearing
+
+
+def NESW(br):
+	if br >= 355 or br <= 5:
+		return 'N'
+	elif br > 5 or br < 85:
+		return 'NE'
+	elif br >= 85 or br <= 95:
+		return 'E'
+	elif br > 95 or br < 175:
+		return 'SE'
+	elif br >= 175 or br <= 185:
+		return 'S'
+	elif br > 185 or br < 265:
+		return 'SW'
+	elif br >= 265 or br <= 275:
+		return 'W'
+	elif br > 275 or br < 355:
+		return 'NW'
+
+
+def checkCoords(locInput):
+	locDict, inputLevel, inputCoords = getCoords(locInput)
+	if not locDict:
+		return 'none', '', '', 0, ''
+	obKeys, outbreaks = dbLocs()
+	locInt = list(set(obKeys).intersection(locDict.keys()))
+	if locInt:
+		matchLoc = locInt[0]
+		matchLevel = locDict[locInt[0]]
+		return 'exact', matchLoc, matchLevel, 0, ''
+	else:
+		dcollect = []
+		for ob in obKeys:
+			matchCoords = outbreaks[ob]['coords']
+			distance, bearing = haversine(inputCoords, matchCoords)
+			dcollect.append(distance)
+			outbreaks[ob]['dist'] = distance
+			outbreaks[ob]['dir'] = NESW(bearing)
+		ind = dcollect.index(max(dcollect))
+		matchLoc = obKeys[ind]
+		matchLevel = outbreaks[matchLoc]['type']
+		matchDist = outbreaks[matchLoc]['dist']
+		matchDir = outbreaks[matchLoc]['dir']
+		return 'closest', matchLoc, matchLevel, matchDist, matchDir
 
 
 if __name__ == '__main__':
-	location = ' '.join(sys.argv[1:])
-	loc, lat, lng = getCoords(location)
-	print '%s\t%f\t%f' %(loc, lat, lng)
+	checkCoords('Lokolia')
+	checkCoords('Mamou')
+	
 
