@@ -31,9 +31,10 @@ def getCoords(locInput):
 		levels = [addrcomp[n]['types'][0] for n in range(len(addrcomp))]
 		locs = [addrcomp[n]['long_name'] for n in range(len(addrcomp))]
 		locDict = dict(zip(locs, levels))
+		searchRes = addrcomp[0]['long_name']
 	except KeyError:
 		return {}, '', (0, 0) #empty result
-	return locDict, levels[0], (coords['lat'], coords['lng'])
+	return searchRes, locDict, levels[0], (coords['lat'], coords['lng'])
 
 
 def haversine((lat1, lng1), (lat2, lng2)):
@@ -71,15 +72,15 @@ def NESW(br):
 
 
 def checkCoords(locInput):
-	locDict, inputLevel, inputCoords = getCoords(locInput)
+	searchRes, locDict, inputLevel, inputCoords = getCoords(locInput)
 	if not locDict:
-		return 'none', '', '', 0, ''
+		return 'none', '', '', '', 0, ''
 	obKeys, outbreaks = dbLocs()
 	locInt = list(set(obKeys).intersection(locDict.keys()))
 	if locInt:
 		matchLoc = locInt[0]
 		matchLevel = locDict[locInt[0]]
-		return 'exact', matchLoc, matchLevel, 0, ''
+		return 'exact', searchRes, matchLoc, matchLevel, 0, ''
 	else:
 		dcollect = []
 		for ob in obKeys:
@@ -89,15 +90,15 @@ def checkCoords(locInput):
 			outbreaks[ob]['dist'] = distance
 			outbreaks[ob]['dir'] = NESW(bearing)
 		ind = dcollect.index(min(dcollect))
-		matchLoc = obKeys[ind]
-		matchLevel = outbreaks[matchLoc]['type']
+		matchLoc = unicode(obKeys[ind])
+		matchLevel = unicode(outbreaks[matchLoc]['type'])
 		matchDist = outbreaks[matchLoc]['dist']
 		matchDir = outbreaks[matchLoc]['dir']
-		return 'closest', matchLoc, matchLevel, matchDist, matchDir
+		return 'closest', searchRes, matchLoc, matchLevel, matchDist, matchDir
 
 
 if __name__ == '__main__':
-	checkCoords('Lokolia')
-	checkCoords('Mamou')
+	print checkCoords('Lokolia')
+	print checkCoords('Mamou')
 	
 
