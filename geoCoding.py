@@ -21,10 +21,11 @@ def getCoords(locInput):
 	response = urllib2.urlopen(url)
 	geocode = response.read()
 	jsonres = json.loads(geocode)
+	emptyResult = unicode(loc), {}, '', (0, 0)
 	if jsonres['status'] == 'OK':
 		pass
 	else:
-		return {}, '', (0, 0) #empty result
+		return emptyResult
 	try:
 		coords = jsonres['results'][0]['geometry']['location']
 		addrcomp = jsonres['results'][0]['address_components']
@@ -33,7 +34,7 @@ def getCoords(locInput):
 		locDict = dict(zip(locs, levels))
 		searchRes = addrcomp[0]['long_name']
 	except KeyError:
-		return {}, '', (0, 0) #empty result
+		return emptyResult
 	return searchRes, locDict, levels[0], (coords['lat'], coords['lng'])
 
 
@@ -74,7 +75,7 @@ def NESW(br):
 def checkCoords(locInput):
 	searchRes, locDict, inputLevel, inputCoords = getCoords(locInput)
 	if not locDict:
-		return 'none', '', '', '', 0, ''
+		return 'none', searchRes, '', '', 0, ''
 	obKeys, outbreaks = dbLocs()
 	locInt = list(set(obKeys).intersection(locDict.keys()))
 	if locInt:

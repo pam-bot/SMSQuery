@@ -19,7 +19,7 @@ def processBody(body):
 		elif match == 'closest':
 			sendStr = u"Vous avez cherché à {closeSearch}. Votre emplacement ne est pas sur notre liste des sites touchés par le virus Ebola. L'emplacement le plus proche est dans le {closeLevel} {closePlace} dans la direction {closeDir} à environ {closeDist:.0f} km".format(closeLevel=regionDict[level], closePlace=name, closeDist=dist, closeDir=nesw, closeSearch=search)
 		elif match == 'none':
-			sendStr = u"Vous avez cherché à {noneSearch}. ".format(nonSearch=search) + defaultStr
+			sendStr = u"Vous avez cherché à {noneSearch}. ".format(noneSearch=search) + defaultStr
 	else:
 		sendStr = defaultStr
 	return sendStr
