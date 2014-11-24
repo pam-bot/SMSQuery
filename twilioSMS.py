@@ -7,7 +7,10 @@ from SpellCheck import *
  # -*- coding: UTF-8 -*-
 
 '''
-For the spellchecker, what we need is very simple. Just a quick search for the location entery in the database, and if it's not found run the correct('') function on that word and send it back to them, asking "Avez-vous l'intention de dire ca? Y/N" If yes, use the correct(location) instead, if N use the exact text.  
+For the spellchecker, what we need is very simple. Just a quick search for the location entery in the database, 
+and if it's not found run the correct('') function on that word and send it back to them, asking "Avez-vous l'intention de dire ca? Y/N" 
+If Y, use the correct(location) instead, if N use the exact text. The actual flag is going to be something like dbSelect(location), without 
+the filter for Presence. 
 '''
 
 
