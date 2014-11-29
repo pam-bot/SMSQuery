@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request, redirect
 import twilio.twiml
 from geoCoding import checkCoords
@@ -27,9 +30,8 @@ def processBody(body):
 app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def hello_monkey():
-	"""twilioSMS for Ebola takes input text messages
-	and connects user requests (i.e. loc) to available
-	outbreak information."""
+	"""twilioSMS for Ebola takes input text messages and connects 
+	user requests to available outbreak information."""
 	from_number = request.values.get('From', None)
 	from_body = request.values.get('Body', None)
 	sendStr = processBody(from_body)

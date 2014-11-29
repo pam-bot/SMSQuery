@@ -101,5 +101,6 @@ def checkCoords(locInput):
 if __name__ == '__main__':
 	print checkCoords('Lokolia')
 	print checkCoords('Mamou')
+	print checkCoords('Complete Nonsense')
 	
 
