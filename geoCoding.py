@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import sys
+sys.path.insert(0, 'lib')
+
+import os
 import math as m
 import urllib2
 import json
@@ -5,7 +11,14 @@ import MySQLdb
 
 
 def dbLocs():
-	db = MySQLdb.connect(host='localhost', user='ping', passwd='temp', db='smsante')
+	env = os.getenv('SERVER_SOFTWARE')
+	if (env and env.startswith('Google App Engine/')):
+		# Connecting from App Engine
+		db = MySQLdb.connect(
+			unix_socket='/cloudsql/sms-sante:outbreaks',
+			user='root')
+	else:
+		db = MySQLdb.connect(host='localhost', user='ping', passwd='temp', db='smsante')
 	cur = db.cursor()
 	cur.execute("SELECT location, latitude, longitude, type FROM outbreaks WHERE presence='Y';")
 	outbreaks = {}
@@ -21,7 +34,7 @@ def getCoords(locInput):
 	response = urllib2.urlopen(url)
 	geocode = response.read()
 	jsonres = json.loads(geocode)
-	emptyResult = unicode(loc), {}, '', (0, 0)
+	emptyResult = unicode(locInput), {}, '', (0, 0)
 	if jsonres['status'] == 'OK':
 		pass
 	else:
