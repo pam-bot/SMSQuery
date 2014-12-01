@@ -36,14 +36,13 @@ app = Flask(__name__)
 def SMSante():
 	from_number = request.values.get('From', None)
 	from_body = request.values.get('Body', None)
-	sendStr = processBody(from_body)
 	resp = twilio.twiml.Response()
 	if from_number and from_body:
+		sendStr = processBody(from_body)
 		resp.message(sendStr)
 		return str(resp)
 	else:
-		return 	"""SMSante takes input text messages and connects 
-	user requests to available outbreak information."""
+		return 'If you can read this, everything is working.'
 
 #if __name__ == "__main__":
 	#app.run(debug=True)
