@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 sys.path.insert(0, 'lib')
+sys.path.insert(1, '')
 
 from flask import Flask, request, redirect
 import twilio.twiml
@@ -24,7 +25,7 @@ def processBody(body):
 		if match == 'exact':
 			sendStr = u"Vous avez cherché à {exactSearch}. Votre {exactLevel} {exactPlace} est sur notre liste des sites touchés par le virus Ebola.".format(exactLevel=regionDict[level], exactPlace=name, exactSearch=search)
 		elif match == 'closest':
-			sendStr = u"Vous avez cherché à {closeSearch}. Votre emplacement ne est pas sur notre liste des sites touchés par le virus Ebola. L'emplacement le plus proche est dans le {closeLevel} {closePlace} dans la direction {closeDir} à environ {closeDist:.0f} km".format(closeLevel=regionDict[level], closePlace=name, closeDist=dist, closeDir=nesw, closeSearch=search)
+			sendStr = u"Vous avez cherché à {closeSearch}. La location avec Ebola le plus proche est dans le {closeLevel} {closePlace} dans la direction {closeDir} à environ {closeDist:.0f} km".format(closeLevel=regionDict[level], closePlace=name, closeDist=dist, closeDir=nesw, closeSearch=search)
 		elif match == 'none':
 			sendStr = u"Vous avez cherché à {noneSearch}. ".format(noneSearch=search) + defaultStr
 	else:
@@ -42,7 +43,7 @@ def SMSante():
 		resp.message(sendStr)
 		return str(resp)
 	else:
-		return processBody('infos Pita')
+		return 'If you can read this, everything is working.'
 
 #if __name__ == "__main__":
 	#app.run(debug=True)
