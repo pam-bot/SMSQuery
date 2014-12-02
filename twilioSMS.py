@@ -12,7 +12,7 @@ app.config['DEBUG'] = True
 
 def processBody(body):
 	body = ' '.join(body.split())
-	usage = body.split(' ')[0]
+	usage = body.split(' ')[0].lower()
 	location = ' '.join(body.split(' ')[1:])
 	defaultStr = u"S'il vous plaît excuser notre erreur. Taper 'infos' et le nom de votre ville et essayez à nouveau. Par example, 'infos Mamou'."
 	regionDict = {u'locality': u'ville',
@@ -32,7 +32,7 @@ def processBody(body):
 	return sendStr
 
 app = Flask(__name__)
-@app.route("/", methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def SMSante():
 	from_number = request.values.get('From', None)
 	from_body = request.values.get('Body', None)
@@ -42,7 +42,7 @@ def SMSante():
 		resp.message(sendStr)
 		return str(resp)
 	else:
-		return 'If you can read this, everything is working.'
+		return processBody('infos Pita')
 
 #if __name__ == "__main__":
 	#app.run(debug=True)

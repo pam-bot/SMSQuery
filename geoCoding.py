@@ -17,12 +17,17 @@ def dbLocs():
 		db = MySQLdb.connect(
 			unix_socket='/cloudsql/sms-sante:outbreaks',
 			user='root')
+		cur = db.cursor()
+		cur.execute("SELECT location, latitude, longitude, type FROM outbreaks WHERE presence='Y';")
+		data = cur.fetchall()
 	else:
-		db = MySQLdb.connect(host='localhost', user='ping', passwd='temp', db='smsante')
-	cur = db.cursor()
-	cur.execute("SELECT location, latitude, longitude, type FROM outbreaks WHERE presence='Y';")
+		#db = MySQLdb.connect(host='localhost', user='ping', passwd='temp', db='smsante')
+		with open('outbreaks.csv', 'r') as f:
+			_ = f.readline()
+			db = [l.split(',') for l in f.read().splitlines()]
+		data = [(l[0], float(l[1]), float(l[2]), l[3]) for l in db if l[-1]=='Y']
 	outbreaks = {}
-	for loc in cur.fetchall():
+	for loc in data:
 		outbreaks[loc[0]] = {'coords': (loc[1], loc[2]), 'type': loc[3]}
 	obKeys = outbreaks.keys()
 	return obKeys, outbreaks
