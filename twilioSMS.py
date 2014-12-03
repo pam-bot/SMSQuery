@@ -20,7 +20,7 @@ def processBody(body):
 		u'administrative_area_level_2': u'région',
 		u'administrative_area_level_1': u'province',
 		u'country': u'pays'}
-	if usage == 'infos':
+	if 'infos' in usage:
 		match, search, name, level, dist, nesw = checkCoords(location)
 		if match == 'exact':
 			sendStr = u"Vous avez cherché à {exactSearch}. Votre {exactLevel} {exactPlace} est sur notre liste des sites touchés par le virus Ebola.".format(exactLevel=regionDict[level], exactPlace=name, exactSearch=search)
