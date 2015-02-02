@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+"""
+# SDK notes
+cd $HOME/Install/google_appengine
+ROOT=$HOME/Dropbox/Repos/SMSante
+python dev_appserver.py $ROOT
+#python appcfg.py -A emerald-pipe-781 --oauth2 update $ROOT
+"""
+
 import sys
 sys.path.insert(0, 'lib')
 sys.path.insert(1, '')
@@ -41,7 +50,7 @@ def SMSante():
 		# resp = twilio.twiml.Response()
 		# resp.message('Message not received.')
 		from_number = '+16135555555'
-		from_body = 'testing'
+		from_body = 'Ottawa'
 		qid = store_query(from_number, from_body)
 		return render_template('middle.html', input_data=(qid, from_body))
 

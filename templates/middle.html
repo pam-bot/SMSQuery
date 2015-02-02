@@ -1,9 +1,49 @@
+<!DOCTYPE html>
 <html>
 <head>
-<script>
+
+<script type="text/javascript"
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy_2AOCqU0alY30c-N24_ESyHLAR4hNG4">
+</script>
+
+
+<script type="text/javascript">
 var inputData = {{ input_data|tojson }};
+var qid = inputData[0];
+var query = inputData[1];
+
+var geocoder;
+var coords;
+var exitStatus;
+
+function initialize() {
+	geocoder = new google.maps.Geocoder();
+}
+
+function codeAddress() {
+	geocoder.geocode( { "address": query}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			coords = results[0].geometry.location;
+			exitStatus = Boolean(1);
+		} else {
+			coords = new google.maps.LatLng(0.0, 0.0);
+			exitStatus = Boolean(0);
+		}
+	});
+}
+
+// for ottawa, coords = (45.4215296, -75.69719309999999)
+// that's (latitude N, longitude E)
+
+function start() {
+  initialize();
+  codeAddress();
+}
+
+window.onload = start;
+
 </script>
 <body>
-<button onclick="alert(inputData[1])">Test Me</button>
+
 </body>
 </html>
