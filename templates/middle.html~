@@ -1,0 +1,9 @@
+<html>
+<head>
+<script>
+var inputData = {{ input_data }};
+</script>
+<body>
+<button onclick="alert(inputData[1])">Test Me</button>
+</body>
+</html>

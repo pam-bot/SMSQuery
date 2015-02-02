@@ -39,7 +39,7 @@ def SMSante():
 		# just for tests
 		# otherwise send back that data wasn't received
 		# resp = twilio.twiml.Response()
-		# resp.message('Message not received.')
+		# resp.message(sendStr)
 		from_number = '+16135555555'
 		from_body = 'testing'
 		qid = store_query(from_number, from_body)

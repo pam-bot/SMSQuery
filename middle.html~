@@ -1,0 +1,10 @@
+<html>
+<head>
+<script>
+var query_id = {{ qid }};
+var query = {{ from_body }};
+</script>
+<body>
+<button onclick="alert('Geocode: ' + myGeocode[0] + ' ' + myGeocode[1])" />
+</body>
+</html>
