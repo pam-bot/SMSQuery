@@ -1,12 +1,12 @@
 application: sms-sante
-version: 1
+version: 2
 runtime: python27
 api_version: 1
 threadsafe: yes
 
 handlers:
 - url: .*
-  script: twilioSMS.app
+  script: input.app
 
 libraries:
 - name: jinja2
