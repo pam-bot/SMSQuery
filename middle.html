@@ -1,0 +1,9 @@
+<html>
+<head>
+<script>
+var myGeocode = {{ geocode|tojson }};
+</script>
+<body>
+<button onclick="alert('Geocode: ' + myGeocode[0] + ' ' + myGeocode[1])" />
+</body>
+</html>

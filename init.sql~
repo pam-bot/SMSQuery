@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS `sms_input`;
+USE `sms_input`;
+
+CREATE TABLE `sms_input`.`info_query` (
+  query_id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  from_number VARCHAR(255) NOT NULL,
+  from_body VARCHAR(1024) NOT NULL,
+  query_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
