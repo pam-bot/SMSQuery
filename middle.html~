@@ -1,9 +1,0 @@
-<html>
-<head>
-<script>
-var someJavaScriptVar = '{{ geocode[1] }}';
-</script>
-<body>
-<p>If you can read this, everything is working.</p>
-</body>
-</html>
