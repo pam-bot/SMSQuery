@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, 'lib')
 sys.path.insert(1, '')
 
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, jsonify, render_template
 import twilio.twiml
 import MySQLdb
 
@@ -36,6 +36,7 @@ def store_query(number, body):
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
+
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def SMSante():
@@ -53,6 +54,14 @@ def SMSante():
 		from_body = 'Ottawa'
 		qid = store_query(from_number, from_body)
 		return render_template('middle.html', input_data=(qid, from_body))
+
+
+@app.route('/_add_numbers')
+def add_numbers():
+    a = request.args.get('a', 0, type=float)
+    b = request.args.get('b', 0, type=float)
+    return jsonify(result=a + b)
+
 
 if __name__ == '__main__':
 	app.run(debug=True)

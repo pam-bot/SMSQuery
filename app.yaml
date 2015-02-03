@@ -5,8 +5,10 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: .*
-  script: input.app
+- url: /
+  script: operator.app
+- url: /_add_numbers
+  script: operator.app
 
 libraries:
 - name: jinja2

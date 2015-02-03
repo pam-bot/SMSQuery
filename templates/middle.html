@@ -2,10 +2,12 @@
 <html>
 <head>
 
-<script type="text/javascript"
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy_2AOCqU0alY30c-N24_ESyHLAR4hNG4">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy_2AOCqU0alY30c-N24_ESyHLAR4hNG4">
 </script>
-
+<script type="text/javascript">
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
 
 <script type="text/javascript">
 var inputData = {{ input_data|tojson }};
@@ -14,7 +16,7 @@ var query = inputData[1];
 
 var geocoder;
 var coords;
-var exitStatus;
+var loc_name;
 
 function initialize() {
 	geocoder = new google.maps.Geocoder();
@@ -24,10 +26,10 @@ function codeAddress() {
 	geocoder.geocode( { "address": query}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			coords = results[0].geometry.location;
-			exitStatus = Boolean(1);
+			loc_name = results[0].formatted_address;
 		} else {
 			coords = new google.maps.LatLng(0.0, 0.0);
-			exitStatus = Boolean(0);
+			loc_name = "None";
 		}
 	});
 }
@@ -35,15 +37,29 @@ function codeAddress() {
 // for ottawa, coords = (45.4215296, -75.69719309999999)
 // that's (latitude N, longitude E)
 
+  $(function() {
+    $('a#calculate').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
+        a: coords.lat(),
+        b: coords.lng()
+      }, function(data) {
+        $("#result").text(data.result);
+      });
+      return false;
+    });
+  });
+
 function start() {
-  initialize();
-  codeAddress();
+	initialize();
+	codeAddress();
 }
 
 window.onload = start;
 
 </script>
 <body>
-
+<h1>jQuery Example</h1>
+   <span id=result>???</span>
+<p><a href=# id=calculate>show</a>
 </body>
 </html>
