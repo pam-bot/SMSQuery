@@ -6,9 +6,9 @@ threadsafe: yes
 
 handlers:
 - url: /
-  script: operator.app
-- url: /_add_numbers
-  script: operator.app
+  script: index.app
+- url: /geocode
+  script: index.app
 
 libraries:
 - name: jinja2

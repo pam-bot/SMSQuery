@@ -56,11 +56,11 @@ def SMSante():
 		return render_template('middle.html', input_data=(qid, from_body))
 
 
-@app.route('/_add_numbers')
+@app.route('/geocode')
 def add_numbers():
-    a = request.args.get('a', 0, type=float)
-    b = request.args.get('b', 0, type=float)
-    return jsonify(result=a + b)
+    lat = request.args.get('lat', 0, type=float)
+    lng = request.args.get('lng', 0, type=float)
+    return jsonify(result="Got coords = ("+str(lat)+", "+str(lng)+")")
 
 
 if __name__ == '__main__':

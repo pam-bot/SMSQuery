@@ -10,13 +10,14 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 
 <script type="text/javascript">
+
 var inputData = {{ input_data|tojson }};
 var qid = inputData[0];
 var query = inputData[1];
 
 var geocoder;
 var coords;
-var loc_name;
+var loc;
 
 function initialize() {
 	geocoder = new google.maps.Geocoder();
@@ -26,10 +27,10 @@ function codeAddress() {
 	geocoder.geocode( { "address": query}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			coords = results[0].geometry.location;
-			loc_name = results[0].formatted_address;
+			loc = results[0].formatted_address;
 		} else {
 			coords = new google.maps.LatLng(0.0, 0.0);
-			loc_name = "None";
+			loc = "None";
 		}
 	});
 }
@@ -37,24 +38,21 @@ function codeAddress() {
 // for ottawa, coords = (45.4215296, -75.69719309999999)
 // that's (latitude N, longitude E)
 
-  $(function() {
-    $('a#calculate').bind('click', function() {
-      $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
-        a: coords.lat(),
-        b: coords.lng()
-      }, function(data) {
-        $("#result").text(data.result);
-      });
-      return false;
-    });
-  });
-
-function start() {
+$(document).ready(function(){
 	initialize();
 	codeAddress();
-}
+	
+	$(window).load(function() {
+		$.getJSON($SCRIPT_ROOT + '/geocode', {
+			lat: coords.lat(),
+			lng: coords.lng(),
+			loc: loc
+		}, function(data) {
+			$("#result").text(data.result);
+		});
+	});
 
-window.onload = start;
+});
 
 </script>
 <body>
