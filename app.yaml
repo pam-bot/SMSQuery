@@ -6,7 +6,7 @@ threadsafe: yes
 
 handlers:
 - url: .*
-  script: twilioSMS.app
+  script: SMSQuery.app
 
 libraries:
 - name: jinja2
