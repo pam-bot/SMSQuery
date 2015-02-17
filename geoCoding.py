@@ -10,21 +10,23 @@ import json
 import MySQLdb
 import time
 import random
-import datetime
 
 
 def dbLocs():
 	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
-	sql_cmd = "SELECT location,latitude,longitude,type FROM outbreaks WHERE presence='Y';"
+	sql = "SELECT location,latitude,longitude,type,report_time FROM outbreaks WHERE presence='Y';"
 	with db:
 		cur = db.cursor()
-		cur.execute(sql_cmd)
+		cur.execute(sql)
 		data = cur.fetchall()
 	outbreaks = {}
+	dates = []
 	for loc in data:
 		outbreaks[loc[0]] = {'coords': (loc[1], loc[2]), 'type': loc[3]}
+		dates.append(loc[4])
 	obKeys = outbreaks.keys()
-	return obKeys, outbreaks
+	lastUpdate = max(dates)
+	return obKeys, outbreaks, lastUpdate
 
 
 def withinQuota():
@@ -46,6 +48,7 @@ def getCoords(locInput):
 	attempts = 0
 	success = False
 	while success != True and attempts <= 10:
+		attempts += 1
 		url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + loc + '+Africa'
 		response = urllib2.urlopen(url).read()
 		jsonres = json.loads(response) 
@@ -112,7 +115,7 @@ def checkCoords(locInput):
 		return 'over', searchRes, '', '', 0, ''
 	if status == 'FAIL' or not locDict:
 		return 'none', searchRes, '', '', 0, ''
-	obKeys, outbreaks = dbLocs()
+	obKeys, outbreaks, lastUpdate = dbLocs()
 	locInt = list(set(obKeys).intersection(locDict.keys()))
 	if locInt and status == 'OK':
 		matchLoc = locInt[0]

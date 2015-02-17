@@ -19,13 +19,16 @@ def SMSante():
 	from_body = request.values.get('Body', None)
 	resp = twilio.twiml.Response()
 	if from_number and from_body:
-		sendStr = geoResponse(from_body)
-		resp.message(sendStr)
+		geoStr = geoResponse(from_body)
+		bedStr = bedResponse()
+		resp.message(geoStr + ' ' + bedStr)
 		return str(resp)
 	else:
 		from_number = '16135555555'
 		from_body = 'Ottawa'
-		return geoResponse(from_body)
+		geoStr = geoResponse(from_body)
+		bedStr = bedResponse()
+		return geoStr + ' ' + bedStr
 
 if __name__ == "__main__":
 	app.run(debug=True)
