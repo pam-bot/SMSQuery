@@ -3,12 +3,12 @@
 import sys
 sys.path.insert(0, 'lib')
 sys.path.insert(1, '')
-from geoCoding import dbLocs, checkCoords
+from geoCoding import geoDate, checkCoords
 import MySQLdb
 import datetime
 
 def geoResponse(body):
-	_, _, lastUpdate = dbLocs()
+	lastUpdate = geoDate()
 	location = '+'.join(body.split())
 	defaultStr = u"S'il vous plaît excuser notre erreur. Taper le nom de votre ville et essayez à nouveau. Par example, 'Mamou'."
 	regionDict = {u'locality': u'ville',

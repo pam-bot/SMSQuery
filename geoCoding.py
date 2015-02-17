@@ -14,19 +14,30 @@ import random
 
 def dbLocs():
 	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
-	sql = "SELECT location,latitude,longitude,type,report_time FROM outbreaks WHERE presence='Y';"
+	sql = "SELECT location,latitude,longitude,type FROM outbreaks WHERE presence='Y';"
 	with db:
 		cur = db.cursor()
 		cur.execute(sql)
 		data = cur.fetchall()
 	outbreaks = {}
-	dates = []
 	for loc in data:
 		outbreaks[loc[0]] = {'coords': (loc[1], loc[2]), 'type': loc[3]}
-		dates.append(loc[4])
 	obKeys = outbreaks.keys()
+	return obKeys, outbreaks
+
+
+def geoDate():
+	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
+	sql = "SELECT report_time FROM outbreaks WHERE presence='Y';"
+	with db:
+		cur = db.cursor()
+		cur.execute(sql)
+		data = cur.fetchall()
+	dates = []
+	for loc in data:
+		dates.append(loc[0])
 	lastUpdate = max(dates)
-	return obKeys, outbreaks, lastUpdate
+	return lastUpdate
 
 
 def withinQuota():
@@ -115,7 +126,7 @@ def checkCoords(locInput):
 		return 'over', searchRes, '', '', 0, ''
 	if status == 'FAIL' or not locDict:
 		return 'none', searchRes, '', '', 0, ''
-	obKeys, outbreaks, lastUpdate = dbLocs()
+	obKeys, outbreaks = dbLocs()
 	locInt = list(set(obKeys).intersection(locDict.keys()))
 	if locInt and status == 'OK':
 		matchLoc = locInt[0]
