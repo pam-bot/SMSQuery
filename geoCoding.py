@@ -8,11 +8,14 @@ import math as m
 import urllib2
 import json
 import MySQLdb
+import time
+import random
+import datetime
 
 
 def dbLocs():
 	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
-	sql_cmd = """SELECT * FROM outbreaks WHERE presence='Y';"""
+	sql_cmd = "SELECT location,latitude,longitude,type FROM outbreaks WHERE presence='Y';"
 	with db:
 		cur = db.cursor()
 		cur.execute(sql_cmd)
@@ -24,17 +27,39 @@ def dbLocs():
 	return obKeys, outbreaks
 
 
+def withinQuota():
+	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_input')
+	sql = "SELECT query_time FROM info_query WHERE query_time >= CURDATE();"
+	with db:
+		cur = db.cursor()
+		cur.execute(sql)
+		qtimes = len(cur.fetchall())
+	if qtimes < 2500:
+		return True
+	else:
+		return False
+
+
 def getCoords(locInput):
 	loc = '+'.join(locInput.split(' '))
-	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + loc + '+Africa'
-	response = urllib2.urlopen(url)
-	geocode = response.read()
-	jsonres = json.loads(geocode)
-	emptyResult = unicode(locInput), {}, '', (0, 0)
-	if jsonres['status'] == 'OK':
-		pass
-	else:
-		return emptyResult
+	emptyResult = [unicode(locInput), {}, '', (0, 0), 'FAIL']
+	attempts = 0
+	success = False
+	while success != True and attempts <= 10:
+		url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + loc + '+Africa'
+		response = urllib2.urlopen(url).read()
+		jsonres = json.loads(response) 
+		status = jsonres['status']
+		if status == 'OK':
+			break
+		elif status == 'OVER_QUERY_LIMIT' and withinQuota():
+			time.sleep(random.random())
+			continue
+		elif status == 'OVER_QUERY_LIMIT' and not withinQuota():
+			emptyResult[-1] = 'OVER_QUERY_LIMIT'
+			return emptyResult
+		else:
+			return emptyResult
 	try:
 		coords = jsonres['results'][0]['geometry']['location']
 		addrcomp = jsonres['results'][0]['address_components']
@@ -44,7 +69,7 @@ def getCoords(locInput):
 		searchRes = addrcomp[0]['long_name']
 	except KeyError:
 		return emptyResult
-	return searchRes, locDict, levels[0], (coords['lat'], coords['lng'])
+	return searchRes, locDict, levels[0], (coords['lat'], coords['lng']), 'OK'
 
 
 def haversine((lat1, lng1), (lat2, lng2)):
@@ -82,16 +107,18 @@ def NESW(br):
 
 
 def checkCoords(locInput):
-	searchRes, locDict, inputLevel, inputCoords = getCoords(locInput)
-	if not locDict:
+	searchRes, locDict, inputLevel, inputCoords, status = getCoords(locInput)
+	if status == 'OVER_QUERY_LIMIT':
+		return 'over', searchRes, '', '', 0, ''
+	if status == 'FAIL' or not locDict:
 		return 'none', searchRes, '', '', 0, ''
 	obKeys, outbreaks = dbLocs()
 	locInt = list(set(obKeys).intersection(locDict.keys()))
-	if locInt:
+	if locInt and status == 'OK':
 		matchLoc = locInt[0]
 		matchLevel = locDict[locInt[0]]
 		return 'exact', searchRes, matchLoc, matchLevel, 0, ''
-	else:
+	elif not locInt and status == 'OK':
 		dcollect = []
 		for ob in obKeys:
 			matchCoords = outbreaks[ob]['coords']
@@ -105,6 +132,8 @@ def checkCoords(locInput):
 		matchDist = outbreaks[matchLoc]['dist']
 		matchDir = outbreaks[matchLoc]['dir']
 		return 'closest', searchRes, matchLoc, matchLevel, matchDist, matchDir
+	else:
+		return 'none', searchRes, '', '', 0, '' # redundant, just in case
 
 
 if __name__ == '__main__':

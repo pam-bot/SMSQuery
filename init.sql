@@ -39,6 +39,14 @@ CREATE TABLE IF NOT EXISTS `sms_data`.`outbreaks` (
   `report_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+/* FAKE QUERY DATA */;
+LOCK TABLES sms_input.info_query WRITE;
+INSERT INTO sms_input.info_query (from_number, from_body) 
+VALUES ('16135555555', 'hello pam'),
+('16135555555', 'hello pam again');
+UNLOCK TABLES;
+
 /* FAKE HOSPITAL DATA */;
 LOCK TABLES sms_data.hospital_beds WRITE;
 INSERT INTO sms_data.hospital_beds (hospital_id, hospital_name, location, country, beds) 
