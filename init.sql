@@ -13,7 +13,17 @@ CREATE TABLE IF NOT EXISTS `sms_input`.`beds_report` (
   `from_number` VARCHAR(255) NOT NULL,
   `from_body` VARCHAR(2048) NOT NULL,
   `hospital_id` INT UNSIGNED NOT NULL,
+  `authentic` TINYINT(1) NOT NULL,
+  `success` TINYINT(1) NOT NULL,
   `report_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `sms_input`.`registered_users` (
+  `user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(255) NOT NULL,
+  `from_number` VARCHAR(255) NOT NULL,
+  `hospital_id` INT UNSIGNED NOT NULL,
+  `last_modified` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -39,6 +49,12 @@ CREATE TABLE IF NOT EXISTS `sms_data`.`outbreaks` (
   `report_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+/* FAKE DATA ENTRY PEOPLE */;
+LOCK TABLES sms_input.registered_users WRITE;
+INSERT INTO sms_input.registered_users (name, from_number, hospital_id) 
+VALUES ('Pam', '16463877470', 1111);
+UNLOCK TABLES;
 
 /* FAKE QUERY DATA */;
 LOCK TABLES sms_input.info_query WRITE;

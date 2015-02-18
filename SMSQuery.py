@@ -6,7 +6,7 @@ sys.path.insert(1, '')
 
 from flask import Flask, request, redirect
 import twilio.twiml
-from processInput import geoResponse, bedResponse
+from processInput import geoResponse, bedResponse, logUser
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -22,6 +22,7 @@ def SMSante():
 		geoStr = geoResponse(from_body)
 		bedStr = bedResponse()
 		resp.message(geoStr + ' ' + bedStr)
+		logUser(from_number, from_body)
 		return str(resp)
 	else:
 		from_number = '16135555555'

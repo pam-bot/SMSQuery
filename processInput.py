@@ -47,6 +47,15 @@ def bedResponse():
 	return sendStr
 
 
+def logUser(from_number, from_body):
+	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_input')
+	sql = "INSERT INTO info_query (from_number,from_body) VALUES ('{0}','{1}');".format(from_number, from_body)
+	with db:
+		cur = db.cursor()
+		cur.execute(sql)
+	return
+
+
 if __name__ == '__main__':
 	print geoResponse('Lokolia')
 	print geoResponse('Mamou')
