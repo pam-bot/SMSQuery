@@ -49,10 +49,13 @@ def bedResponse():
 
 def logUser(from_number, from_body):
 	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_input')
-	sql = "INSERT INTO info_query (from_number,from_body) VALUES ('{0}','{1}');".format(from_number, from_body)
+	sql1 = "INSERT INTO info_query (from_number,from_body) VALUES ('{0}','{1}');".format(from_number, from_body)
+	sql2 = "REPLACE INTO unique_users (from_number) VALUES ('{0}');".format(from_number)
 	with db:
 		cur = db.cursor()
-		cur.execute(sql)
+		cur.execute(sql1)
+		cur = db.cursor()
+		cur.execute(sql2)
 	return
 
 
@@ -60,3 +63,5 @@ if __name__ == '__main__':
 	print geoResponse('Lokolia')
 	print geoResponse('Mamou')
 	print geoResponse('Complete Nonsense')
+	print bedResponse()
+	print logUser('+16138227469', 'Mamou')
