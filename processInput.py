@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import sys
 sys.path.insert(0, 'lib')
 sys.path.insert(1, '')
@@ -30,32 +31,36 @@ def geoResponse(body):
 
 
 def bedResponse():
-	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
-	sql = "SELECT hospital_name,location,beds,last_update FROM hospital_beds;"
-	with db:
-		cur = db.cursor()
-		cur.execute(sql)
-		hospitals = cur.fetchall()
-	sendStr = ''
-	for hospital in hospitals:
-		name = hospital[0]
-		location = hospital[1]
-		beds = hospital[2]
-		last = hospital[3]
-		newStr = u"L'hôpital {hospitalName} de {location} dispose de {beds} lits maintenant. Dernière mise à jour: {lastUpdate}. ".format(hospitalName=name, location=location, beds=beds, lastUpdate=last)
-		sendStr = sendStr + newStr
+	env = os.getenv('SERVER_SOFTWARE')
+	if (env and env.startswith('Google App Engine/')):
+		db = MySQLdb.connect(unix_socket='/cloudsql/smsante-query:smsantedb', user='root', db='sms_data')
+		sql = "SELECT hospital_name,location,beds,last_update FROM hospital_beds;"
+		with db:
+			cur = db.cursor()
+			cur.execute(sql)
+			hospitals = cur.fetchall()
+		sendStr = ''
+		for hospital in hospitals:
+			name = hospital[0]
+			location = hospital[1]
+			beds = hospital[2]
+			last = hospital[3]
+			newStr = u"L'hôpital {hospitalName} de {location} dispose de {beds} lits maintenant. Dernière mise à jour: {lastUpdate}. ".format(hospitalName=name, location=location, beds=beds, lastUpdate=last)
+			sendStr = sendStr + newStr
 	return sendStr
 
 
 def logUser(from_number, from_body):
-	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_input')
-	sql1 = "INSERT INTO info_query (from_number,from_body) VALUES ('{0}','{1}');".format(from_number, from_body)
-	sql2 = "REPLACE INTO unique_users (from_number) VALUES ('{0}');".format(from_number)
-	with db:
-		cur = db.cursor()
-		cur.execute(sql1)
-		cur = db.cursor()
-		cur.execute(sql2)
+	env = os.getenv('SERVER_SOFTWARE')
+	if (env and env.startswith('Google App Engine/')):
+		db = MySQLdb.connect(unix_socket='/cloudsql/smsante-query:smsantedb', user='root', db='sms_input')
+		sql1 = "INSERT INTO info_query (from_number,from_body) VALUES ('{0}','{1}');".format(from_number, from_body)
+		sql2 = "REPLACE INTO unique_users (from_number) VALUES ('{0}');".format(from_number)
+		with db:
+			cur = db.cursor()
+			cur.execute(sql1)
+			cur = db.cursor()
+			cur.execute(sql2)
 	return
 
 

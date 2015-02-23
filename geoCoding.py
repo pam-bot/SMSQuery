@@ -13,44 +13,50 @@ import random
 
 
 def dbLocs():
-	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
-	sql = "SELECT location,latitude,longitude,type FROM outbreaks WHERE presence='Y';"
-	with db:
-		cur = db.cursor()
-		cur.execute(sql)
-		data = cur.fetchall()
-	outbreaks = {}
-	for loc in data:
-		outbreaks[loc[0]] = {'coords': (loc[1], loc[2]), 'type': loc[3]}
-	obKeys = outbreaks.keys()
+	env = os.getenv('SERVER_SOFTWARE')
+	if (env and env.startswith('Google App Engine/')):
+		db = MySQLdb.connect(unix_socket='/cloudsql/smsante-query:smsantedb', user='root', db='sms_data')
+		sql = "SELECT location,latitude,longitude,type FROM outbreaks WHERE presence='Y';"
+		with db:
+			cur = db.cursor()
+			cur.execute(sql)
+			data = cur.fetchall()
+		outbreaks = {}
+		for loc in data:
+			outbreaks[loc[0]] = {'coords': (loc[1], loc[2]), 'type': loc[3]}
+		obKeys = outbreaks.keys()
 	return obKeys, outbreaks
 
 
 def geoDate():
-	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_data')
-	sql = "SELECT report_time FROM outbreaks WHERE presence='Y';"
-	with db:
-		cur = db.cursor()
-		cur.execute(sql)
-		data = cur.fetchall()
-	dates = []
-	for loc in data:
-		dates.append(loc[0])
-	lastUpdate = max(dates)
+	env = os.getenv('SERVER_SOFTWARE')
+	if (env and env.startswith('Google App Engine/')):
+		db = MySQLdb.connect(unix_socket='/cloudsql/smsante-query:smsantedb', user='root',  db='sms_data')
+		sql = "SELECT report_time FROM outbreaks WHERE presence='Y';"
+		with db:
+			cur = db.cursor()
+			cur.execute(sql)
+			data = cur.fetchall()
+		dates = []
+		for loc in data:
+			dates.append(loc[0])
+		lastUpdate = max(dates)
 	return lastUpdate
 
 
 def withinQuota():
-	db = MySQLdb.connect(host='localhost', user='root', passwd='mysqltesting', db='sms_input')
-	sql = "SELECT query_time FROM info_query WHERE query_time >= CURDATE();"
-	with db:
-		cur = db.cursor()
-		cur.execute(sql)
-		qtimes = len(cur.fetchall())
-	if qtimes < 2500:
-		return True
-	else:
-		return False
+	env = os.getenv('SERVER_SOFTWARE')
+	if (env and env.startswith('Google App Engine/')):
+		db = MySQLdb.connect(unix_socket='/cloudsql/smsante-query:smsantedb', user='root',  db='sms_input')
+		sql = "SELECT query_time FROM info_query WHERE query_time >= CURDATE();"
+		with db:
+			cur = db.cursor()
+			cur.execute(sql)
+			qtimes = len(cur.fetchall())
+		if qtimes < 2500:
+			return True
+		else:
+			return False
 
 
 def getCoords(locInput):
